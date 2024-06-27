@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pendaftaran dan Tabel Pendaftar</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body class="bg-success">
+
+<div class="container ">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="true">Form Pendaftaran</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="false">Tabel Pendaftar</a>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="myTabContent">
+    <!-- Tab 1: Form Pendaftaran -->
+    <div class="tab-pane fade show active" id="form" role="tabpanel" aria-labelledby="form-tab">
+      <div class="mt-4">
+        <form id="registrationForm">
+          <div class="form-group">
+            <label for="nama">Nama (Minimal 10 Karakter)</label>
+            <input type="text" class="form-control" id="nama" required>
+          </div>
+          <div class="form-group">
+            <label for="umur">Umur (Minimal 25 Tahun)</label>
+            <input type="number" class="form-control" id="umur" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="uangMakan">Uang Makan (100.000 - 1.000.000)</label>
+            <input type="number" class="form-control" id="uangMakan" min="100000" max="1000000" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 2: Tabel Pendaftar -->
+    <div class="tab-pane fade" id="table" role="tabpanel" aria-labelledby="table-tab">
+      <div class="mt-4">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Umur (Tahun)</th>
+              <th>Uang Makan (Rp)</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody">
+            <!-- Data akan ditambahkan melalui JavaScript -->
+          </tbody>
+        </table>
+        <div id="summary" class="mt-4">
+          <strong>Summary:</strong><br>
+          Rata-rata Umur: <span id="averageAge">-</span> tahun<br>
+          Rata-rata Uang Makan: Rp <span id="averageUangMakan">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+  document.getElementById('registrationForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Ambil nilai dari form
+    var nama = document.getElementById('nama').value;
+    var umur = parseInt(document.getElementById('umur').value);
+    var uangMakan = parseInt(document.getElementById('uangMakan').value);
+
+    // Validasi
+    if (nama.length < 10) {
+      alert('Nama harus minimal 10 karakter.');
+      return;
+    }
+    if (umur < 25) {
+      alert('Umur harus minimal 25 tahun.');
+      return;
+    }
+    if (uangMakan < 100000 || uangMakan > 1000000) {
+      alert('Uang makan harus di antara 100.000 hingga 1.000.000 rupiah.');
+      return;
+    }
+
+    // Simpan data pendaftar ke dalam array
+    var pendaftar = {
+      nama: nama,
+      umur: umur,
+      uangMakan: uangMakan
+    };
+
+    // Tambahkan data pendaftar ke dalam tabel
+    var tableBody = document.getElementById('dataTableBody');
+    var newRow = tableBody.insertRow();
+    newRow.innerHTML = '<td>' + pendaftar.nama + '</td><td>' + pendaftar.umur + '</td><td>' + pendaftar.uangMakan.toLocaleString('id-ID') + '</td>';
+
+    // Hitung rata-rata umur dan uang makan
+    var rows = tableBody.rows;
+    var totalUmur = 0;
+    var totalUangMakan = 0;
+    for (var i = 0; i < rows.length; i++) {
+      totalUmur += parseInt(rows[i].cells[1].textContent);
+      totalUangMakan += parseInt(rows[i].cells[2].textContent.replace(/\D/g, ''));
+    }
+    var averageUmur = totalUmur / rows.length;
+    var averageUangMakan = totalUangMakan / rows.length;
+
+    // Update summary
+    document.getElementById('averageAge').textContent = averageUmur.toFixed(1);
+    document.getElementById('averageUangMakan').textContent = averageUangMakan.toLocaleString('id-ID');
+    
+    // Reset form setelah submit
+    document.getElementById('registrationForm').reset();
+  });
+</script>
+
+</body>
+</html>
